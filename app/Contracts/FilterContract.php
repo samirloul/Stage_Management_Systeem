@@ -13,5 +13,12 @@ use Illuminate\Database\Eloquent\Builder;
  */
 interface FilterContract
 {
+    /**
+     * Pas alle filters toe op de gegeven Eloquent-query.
+     *
+     * @param Builder $query   De te filteren query builder instantie.
+     * @param array   $filters Associatief array met filterwaarden uit het HTTP-verzoek.
+     * @return Builder         De aangepaste query met alle filters toegepast.
+     */
     public function apply(Builder $query, array $filters): Builder;
 }
