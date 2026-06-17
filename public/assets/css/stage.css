@@ -346,3 +346,30 @@ td {
     outline-offset: 2px;
     border-radius: 4px;
 }
+/* ============================================================
+   MOBIELE VERBETERINGEN (max 640px)
+   Zorgt voor bruikbare layout op kleinere schermen.
+   ============================================================ */
+@media (max-width: 640px) {
+    /* Tabel horizontaal scrollbaar op kleine schermen. */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Formuliervelden vullen volledige breedte op mobiel. */
+    .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Opslaan-knop altijd volledige breedte op mobiel voor makkelijker klikken. */
+    .btn-submit {
+        width: 100% !important;
+        justify-self: stretch !important;
+    }
+
+    /* Dashboard-kaarten stapelen op mobiel. */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
