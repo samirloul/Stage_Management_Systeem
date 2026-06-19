@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models;
 
@@ -49,5 +49,11 @@ class Internship extends BaseModel
     {
         // Een stage kan meerdere beoordelingen hebben.
         return $this->hasMany(Review::class);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        // Herbruikbare scope voor actieve stages op basis van de statuskolom.
+        return $query->where('status', 'active');
     }
 }

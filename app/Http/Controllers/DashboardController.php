@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers;
 
@@ -16,9 +16,9 @@ class DashboardController extends Controller
     {
         // Samenvattende cijfers die in de dashboard-cards worden getoond.
         $stats = [
-            'students' => Student::count(),
-            'companies' => Company::count(),
-            'active_internships' => Internship::active()->count(), // Eloquent scope in plaats van raw where voor leesbaarheid.
+            'students' => Student::query()->count('*'),
+            'companies' => Company::query()->count('*'),
+            'active_internships' => Internship::query()->active()->count('*'), // Eloquent scope in plaats van raw where voor leesbaarheid.
             'average_review_score' => round((float) Review::avg('score'), 1),
         ];
 

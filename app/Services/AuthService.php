@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Services;
 
@@ -29,10 +29,11 @@ class AuthService
         // Beoordelingen schrijven is beperkt tot admin en bedrijf.
         return $user->hasRole('admin', 'company');
     }
-    public function canDeleteAny(): bool
+
+    public function canDeleteAny(User $user): bool
     {
         // Alleen admins mogen records permanent verwijderen - extra veiligheidslaag.
-        return $this->user->hasRole('admin');
+        return $user->hasRole('admin');
     }
 
 }

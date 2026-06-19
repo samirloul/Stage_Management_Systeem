@@ -1,197 +1,91 @@
-# LinkedIn Post: Student Internship Management System
+# LinkedIn post (menselijk en professioneel)
 
-## Volledige Post (Copy-paste gereed)
+Ik heb mijn Stage Management Systeem gebouwd om bewust te oefenen met echte software engineering, niet alleen om "iets werkends" op te leveren.
 
----
+In dit project stond voor mij 1 ding centraal: laten zien dat ik begrijp wat ik codeer, waarom ik het zo bouw en welke technische keuzes daarbij horen.
 
-🎓 **Ik ben klaar met mijn OOP-CRUD Internship Management System – en het gaat veel verder dan "het project af maken"**
+Wat deze webapp doet:
+- Studenten beheren (CRUD)
+- Bedrijven beheren (CRUD)
+- Stages koppelen aan student en bedrijf
+- Beoordelingen en feedback registreren
+- Rollen en rechten toepassen
+- Zoeken, filteren en valideren
+- Dashboard met kerncijfers tonen
 
-Ik heb een volledig functioneel **Student Internship Management Platform** gebouwd in **Laravel 11** met MySQL, en ik wil niet zomaar zeggen "het is klaar" – ik wil laten zien **waarom** ik bepaalde technologieën heb gekozen en **hoe** dit systeem is gebouwd op solide engineering principes.
+Waarom ik dit project gemaakt heb:
+- Oefenen met professionele backend structuur
+- Oefenen met OOP-principes in een echte case
+- Begrijpen hoe database, validatie, security en tests samenwerken
+- Laten zien dat ik code onderhoudbaar en uitbreidbaar kan maken
 
-### 🏗️ **Het project: wat doet het?**
-- **Student Management**: Automatische studentnummering (S10001 → S10002) met *gap-reuse algoritme* - als je student S10001 verwijdert, krijgt de volgende student dat nummer
-- **Bedrijf Registratie**: Filteren, zoeken, validatie op bedrijfsgegevens
-- **Stage Management**: Stagebeheer met intelligente validatie (je kunt geen "actieve" stage in het verleden aanmaken)
-- **Feedback & Reviews**: Beoordeling systeem met rol-gebaseerde autorisatie
-- **Dashboard**: Real-time statistieken en gegevensvisualisatie
+Gebruikte programmeertalen en technologieen:
+- PHP (Laravel)
+- SQL (MySQL)
+- HTML (Blade)
+- CSS
+- JavaScript
+- PHPUnit voor testen
 
----
+Belangrijke methodes en concepten die ik bewust heb toegepast:
+- OOP: classes, inheritance, encapsulation, polymorphism
+- Service layer: logica verplaatst uit controllers naar services
+- Dependency Injection: duidelijke scheiding van verantwoordelijkheden
+- CRUD-architectuur: create, read, update, delete per domein
+- Validatie op meerdere niveaus: velden, business rules, status-logica
+- Role Based Access Control via middleware
+- Eager loading om N+1 queries te voorkomen
+- Database relaties met foreign keys en cascade gedrag
+- Testing met duidelijke Arrange-Act-Assert opzet
 
-### 🛠️ **Waarom deze technologieën? De "why" achter mijn keuzes:**
+PDO en waarom dat belangrijk is:
+In Laravel schrijf ik meestal niet handmatig met losse PDO-queries, maar onder de motorkap gebruikt Laravel wel PDO prepared statements.
+Dat is belangrijk omdat:
+- het SQL-injection helpt voorkomen
+- het veilig omgaat met gebruikersinput
+- het zorgt voor betrouwbare database interactie
 
-#### **Laravel 11 (PHP Framework)**
-Ik heb Laravel gekozen omdat het **OOP-principes** als eerste klasse citizen heeft. Niet alleen code schrijven, maar:
-- **Eloquent ORM**: In plaats van ruwe SQL-queries, use ik Object-Relational Mapping. Dit betekent dat database rijen *automatisch* in PHP-objecten worden omgezet
-- **Dependency Injection**: Services (StudentIdentityService, AuthService) worden *ingeject* in controllers, wat testbaarheid en scheiding van verantwoordelijkheden garandeert
-- **Migrations**: Database schema staat in código, niet handmatig SQL. Dit betekent *versiebeheer* en *reproduceerbaarheid*
+PSR-12 en nette code stijl:
+Ik heb gewerkt volgens nette code conventies (PSR-12 stijl), met duidelijke naamgeving, leesbare structuur en commentaar in het Nederlands.
+Doel daarvan:
+- code die anderen snel begrijpen
+- makkelijker reviewen in teamverband
+- veiliger refactoren en uitbreiden
 
-#### **MySQL + PDO (Database & Prepared Statements)**
-Ik gebruik **PDO via Laravel's Eloquent**, want:
-- **SQL Injection voorkomen**: Prepared statements betekenen dat gebruikersinvoer *nooit* rechtstreeks in SQL gaat
-- **Relationele Integriteit**: Foreign keys en cascading deletes – data blijft consistent
-- **Idempotente scripts**: Mijn migrations gebruiken `IF NOT EXISTS` en `DROP IF EXISTS` zodat je veilig `php artisan migrate:fresh` kan runnen zonder errors
+Voor mij is de kern van dit project:
+Ik wil laten zien dat ik niet alleen een project kan bouwen, maar ook technisch kan uitleggen waarom iets werkt, welke afwegingen ik maak en hoe ik kwaliteit borg met validatie, structuur en tests.
 
-#### **Validatie (3-laags systeem)**
-Dit is waar veel developers fout gaan. Ik validate op **drie niveaus**:
+Repository (clone en run zelf):
+https://github.com/samirloul/Stage_Management_Systeem.git
 
-1. **Business Logic Validation**
-   ```php
-   // Opleiding mag GEEN nummers bevatten (dit zijn bedrijfsnamen!)
-   'program' => 'regex:/^[\pL\s\-\/&]+$/u'
-   ```
+Snelle start:
+1. git clone https://github.com/samirloul/Stage_Management_Systeem.git
+2. cd Stage_Management_Systeem
+3. composer install
+4. copy .env.example .env
+5. php artisan key:generate
+6. php artisan migrate:fresh --seed
+7. php artisan serve
 
-2. **Status-Dependent Logic**
-   ```php
-   // Alleen "geldige" status/datum combinaties
-   // - Planned: startdatum kan niet in verleden zijn
-   // - Active: vandaag MOET tussen start en end liggen
-   // - Completed: einddatum moet in verleden zijn
-   ```
+Feedback is welkom. Ik sta open voor code review en verbeterpunten.
 
-3. **Custom Error Messages** (Nederlands!)
-   ```php
-   'messages' => [
-       'program.regex' => 'Opleiding mag alleen letters, spaties en koppeltekens bevatten'
-   ]
-   ```
-
-Dit voorkomt dat gebruikers *onmogelijke situaties* creëren (zoals een "actieve" stage volledig in het verleden).
-
-#### **Automated Testing (PHPUnit)**
-Waarom test ik? Omdat:
-- **Gap-reuse algoritme is kritisch**: Als het fout gaat, gaan studentnummers verloren. Mijn test `test_deleted_student_number_is_reused_when_creating_new_student` verzekert dit **werkt**
-- **Validatie werkt**: Mijn test `test_program_rejects_numbers_with_clear_validation_error` checkt dat het systeem valide invoer accepteert en ongeldige invoer weigert
-- **Status Logic is correct**: `test_active_internship_rejects_fully_past_period` garandeert dat je geen "actieve" stage in het verleden kan hebben
-
-```bash
-# Alle tests groen:
-Tests: 6 passed (25 assertions) ✅
-```
-
----
-
-### 💡 **OOP-Principes in actie:**
-
-**1. Encapsulation (Gegevens beschermen)**
-```php
-// StudentIdentityService - "black box" die nummers genereert
-public function nextStudentNumber(): int {
-    // Implementatie: zoeken naar eerste gat in nummering
-    // De controller hoeft NIETS van dit algoritme af te weten
-}
-```
-
-**2. Single Responsibility Principle**
-- `StudentController` = Student CRUD
-- `StudentIdentityService` = Nummergeneratie ALLEEN
-- `AuthService` = Toestemming checks ALLEEN
-- Elke klasse doet **precies één ding** → makkelijker testen, makkelijker wijzigen
-
-**3. Polymorphism (Flexibiliteit)**
-```php
-// Filter interface - dezelfde logica voor studenten EN bedrijven
-interface FilterContract {
-    public function apply(Builder $query): Builder;
-}
-
-// StudentFilter & CompanyFilter implementeren dezelfde interface
-// → Ruilbaar, testbaar, uitbreidbaar
-```
-
-**4. Eager Loading (Performance)**
-```php
-// N+1 query probleem voorkomen:
-$reviews = Review::with(['internship.student', 'internship.company'])
-```
-In plaats van 1 query voor reviews + 1 per review → alles in **2 queries**
+#Laravel #PHP #OOP #CRUD #SQL #MySQL #PDO #PSR12 #Testing #SoftwareDevelopment #WebDevelopment #StageProject
 
 ---
 
-### 📊 **Wat toont dit over mijn skillset?**
+## Kortere versie (optioneel)
 
-✅ **Ik begrijp relationele databases** – Foreign keys, cascading deletes, idempotente scripts
-✅ **Ik schrijf veilige code** – Prepared statements, validatie op server, role-based access control
-✅ **Ik test wat ik bouw** – PHPUnit met Arrange/Act/Assert pattern
-✅ **Ik ontwerp systemen** – Service layer, filters, dependency injection
-✅ **Ik denk aan edge cases** – Status validatie, gap-reuse algorithm, race condition handling
-✅ **Ik schrijf onderhoudbare code** – Comments in Nederlands, duidelijke functienamen, één verantwoordelijkheid per klasse
+Ik heb een Stage Management Systeem gebouwd in Laravel om gericht te oefenen met OOP, CRUD, validatie, autorisatie, database ontwerp en testen.
 
----
+Wat ik belangrijk vond:
+- Niet alleen bouwen, maar ook begrijpen en kunnen uitleggen waarom de code zo is opgezet
+- Nette code volgens PSR-12 stijl
+- Veiligheid via PDO prepared statements (onder Laravel), validatie en role based access
+- Onderhoudbaarheid via services, filters, middleware en duidelijke structuur
 
-### 🚀 **Hoe je het kan runnen:**
+Tech stack: PHP, Laravel, SQL/MySQL, HTML, CSS, JavaScript, PHPUnit.
 
-```bash
-# Clone en setup
-git clone https://github.com/[jouw-github]/uitlegen_oop_crud_variabelen_testen.git
-cd uitlegen_oop_crud_variabelen_testen
+Je kunt het project zelf clonen en draaien via:
+https://github.com/samirloul/Stage_Management_Systeem.git
 
-# Dependencies
-composer install
-cp .env.example .env
-php artisan key:generate
-
-# Database setup
-php artisan migrate:fresh --seed
-
-# Run tests
-php artisan test
-
-# Start dev server
-php artisan serve
-```
-
-Ga naar `http://localhost:8000` → login met test credentials (zie README)
-
----
-
-### 📚 **Documentatie**
-
-Ik heb alles gedocumenteerd:
-- **CODE_UITLEG_NL.md** - Waar OOP, CRUD, PDO, validatie in de code staat
-- **README.md** - Setup instructies + probleemoplossing
-- **Inline comments** - Nederlands, stap-voor-stap uitleg
-
----
-
-### 🎯 **Voor bedrijven:**
-
-Dit project toont niet alleen dat ik een website kan bouwen – het laat zien dat ik:
-- **Architectuur** begrijp (MVC, dependency injection, service layer)
-- **Security** serieus neem (prepared statements, validatie, role middleware)
-- **Onderhoudbaarheid** prioriteit geef (tests, comments, clean code)
-- **Edge cases** anticipeer (gap-reuse, race conditions, status logic)
-
-Dit is code die je in productie zou zetten.
-
----
-
-**GitHub:** [Link naar jouw repo]
-**Wil je het runnen?** Clone het, run `php artisan migrate:fresh --seed`, en start `php artisan serve`
-
-Laat me horen wat je ervan denkt! 👇
-
-#Laravel #PHP #WebDevelopment #OOP #CRUD #Database #Testing #Internship
-
----
-
-## Tips voor LinkedIn optimalisatie:
-
-1. **Hashtags**: Voeg toe aan einde: `#Laravel` `#PHP` `#WebDevelopment` `#SoftwareEngineering` `#OOP` `#CareerGoals`
-
-2. **Call-to-action**: Voeg toe vóór GitHub link:
-   > "Wil je de code zien? Klik hier → [GitHub Link]
-   > Feedback? Laat een comment! 👇"
-
-3. **Emoji's gebruiken** (optioneel, ik heb al wat ingevoegd):
-   - 🎓 voor education context
-   - 🛠️ voor tools/technology
-   - 💡 voor insights
-   - ✅ voor achievements
-
-4. **Timing**: Post op werkdag tussen 08:00-10:00 of 17:00-19:00 (Nederlandse tijd)
-
----
-
-## Alternatieve "kortere" versie (als post te lang voelt):
-
-Ik kan ook een **kernversie** van 200-300 woorden maken als je voorkeur hebt voor conciseness. Laat het me weten!
+Ik hoor graag feedback van developers en bedrijven.
